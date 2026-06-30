@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Certificate Generator</title>
+    <meta name="description" content="Design and issue beautiful certificates instantly. Supports single and bulk generation with ZIP download.">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap" rel="stylesheet">
+    <!-- JSZip for bulk ZIP download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- jsPDF for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1>Certificate Generator</h1>
+            <p>Design and issue beautiful certificates instantly.</p>
+        </header>
+        
+        <main class="main-content">
+            <aside class="controls-panel">
+                <!-- Upload -->
+                <div class="control-group">
+                    <label for="imageUpload" class="upload-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        Upload Template
+                    </label>
+                    <input type="file" id="imageUpload" accept="image/*" hidden>
+                    <span class="file-name" id="fileName">No file selected</span>
+                </div>
+
+                <!-- Style controls (shared) -->
+                <div class="control-group">
+                    <label for="verticalPos">Text Vertical Position</label>
+                    <input type="range" id="verticalPos" min="0" max="100" value="60">
+                </div>
+                
+                <div class="control-group">
+                    <label for="fontSize">Font Size</label>
+                    <input type="range" id="fontSize" min="20" max="150" value="60">
+                </div>
+
+                <div class="control-group">
+                    <label for="fontFamily">Font Style</label>
+                    <select id="fontFamily">
+                        <option value="'Playfair Display', serif">Elegant (Playfair)</option>
+                        <option value="'Inter', sans-serif">Modern (Inter)</option>
+                        <option value="Arial, sans-serif">Classic (Arial)</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label for="textColor">Text Color</label>
+                    <input type="color" id="textColor" value="#333333">
+                </div>
+
+                <!-- Mode Tabs -->
+                <div class="mode-tabs">
+                    <button class="tab-btn active" id="tabSingle" data-tab="single">Single</button>
+                    <button class="tab-btn" id="tabBulk" data-tab="bulk">Bulk</button>
+                </div>
+
+                <!-- Single Mode -->
+                <div id="panelSingle" class="tab-panel">
+                    <div class="control-group">
+                        <label for="recipientName">Recipient Name</label>
+                        <input type="text" id="recipientName" placeholder="e.g. Jane Doe" autocomplete="off">
+                    </div>
+                    <button id="downloadBtn" class="primary-btn" disabled>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Download Certificate
+                    </button>
+                </div>
+
+                <!-- Bulk Mode -->
+                <div id="panelBulk" class="tab-panel" style="display:none;">
+                    <div class="control-group">
+                        <label for="bulkNames">Names (one per line)</label>
+                        <textarea id="bulkNames" rows="6" placeholder="Alice Johnson&#10;Bob Smith&#10;Carol White&#10;..."></textarea>
+                        <span class="file-name" id="bulkCount">0 names entered</span>
+                    </div>
+                    <button id="downloadZipBtn" class="primary-btn" disabled>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Download ZIP
+                    </button>
+                    <!-- Progress bar -->
+                    <div id="bulkProgress" class="bulk-progress" style="display:none;">
+                        <div class="progress-bar-track">
+                            <div class="progress-bar-fill" id="progressFill"></div>
+                        </div>
+                        <span class="progress-label" id="progressLabel">Generating…</span>
+                    </div>
+                </div>
+            </aside>
+
+            <section class="preview-panel">
+                <div class="canvas-container">
+                    <canvas id="certificateCanvas"></canvas>
+                    <div id="placeholder" class="placeholder-text">
+                        <p>Upload a certificate template to begin.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
