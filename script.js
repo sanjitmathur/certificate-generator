@@ -196,10 +196,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const pngData = offCanvas.toDataURL('image/png');
             folder.file(`${safeName}_Certificate.png`, pngData.split(',')[1], { base64: true });
 
-            // ── JPG ──────────────────────────────────────────────────────────
-            const jpgData = offCanvas.toDataURL('image/jpeg', 0.92);
-            folder.file(`${safeName}_Certificate.jpg`, jpgData.split(',')[1], { base64: true });
-
             // ── PDF ──────────────────────────────────────────────────────────
             const pdf = new jsPDF({
                 orientation: pdfOrientation,
@@ -214,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Update progress
             const pct = Math.round(((i + 1) / names.length) * 100);
             progressFill.style.width = `${pct}%`;
-            progressLabel.textContent = `${i + 1} / ${names.length} — PNG · JPG · PDF`;
+            progressLabel.textContent = `${i + 1} / ${names.length} — PNG · PDF`;
 
             // Yield to browser to keep UI responsive
             await new Promise(r => setTimeout(r, 0));
