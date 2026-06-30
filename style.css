@@ -62,6 +62,8 @@ body {
 .controls-panel {
     flex: 1;
     min-width: 300px;
+    max-height: 90vh;
+    overflow-y: auto;
     background: white;
     padding: 1.5rem;
     border-radius: calc(var(--radius) - 4px);

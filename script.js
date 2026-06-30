@@ -1,4 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // ─── Ensure Google Fonts are loaded before first canvas render ────────────
+    document.fonts.ready.then(() => {
+        drawCertificate();
+    });
     const imageUpload = document.getElementById('imageUpload');
     const fileName = document.getElementById('fileName');
     const recipientName = document.getElementById('recipientName');
@@ -90,9 +94,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         ctx.font = `${size}px ${font}`;
         ctx.fillStyle = color;
-        ctx.textAlign = 'center';
+        // textAlign 'left' + half-text offset so slider 0%=left edge, 50%=center, 100%=right edge
+        ctx.textAlign = 'left';
         ctx.textBaseline = 'bottom';
-        ctx.fillText(name, xPos, yPos);
+        const textWidth = ctx.measureText(name).width;
+        ctx.fillText(name, xPos - textWidth / 2, yPos);
     }
 
     function getFirstBulkName() {
@@ -134,23 +140,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // ─── Single download ──────────────────────────────────────────────────────
+    // ─── Single download (PDF) ────────────────────────────────────────────────
     function downloadCertificate() {
         if (!templateImage) return;
+        const { jsPDF } = window.jspdf;
         const name = recipientName.value.trim() || 'Certificate';
-        const safeName = name.replace(/\s+/g, '_');
-        const link = document.createElement('a');
-        link.download = `${safeName}_Certificate.png`;
-        link.href = canvas.toDataURL('image/png');
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        const safeName = name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_\-]/g, '') || 'Certificate';
+        const pngData = canvas.toDataURL('image/png');
+        const PX_TO_MM = 0.2646;
+        const pdfW = canvas.width * PX_TO_MM;
+        const pdfH = canvas.height * PX_TO_MM;
+        const orientation = pdfW >= pdfH ? 'landscape' : 'portrait';
+        const pdf = new jsPDF({ orientation, unit: 'mm', format: [pdfW, pdfH], compress: true });
+        pdf.addImage(pngData, 'PNG', 0, 0, pdfW, pdfH);
+        pdf.save(`${safeName}.pdf`);
     }
 
     downloadBtn.addEventListener('click', downloadCertificate);
 
     // ─── Bulk ZIP download ────────────────────────────────────────────────────
-    downloadZipBtn.addEventListener('click', async () => {
+    downloadZipBtn.addEventListener('click', async () => { try {
         const names = parseBulkNames();
         if (!templateImage || names.length === 0) return;
 
@@ -190,11 +199,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             offCtx.font = `${size}px ${font}`;
             offCtx.fillStyle = color;
-            offCtx.textAlign = 'center';
+            offCtx.textAlign = 'left';
             offCtx.textBaseline = 'bottom';
-            offCtx.fillText(name, xPos, yPos);
+            const textWidth = offCtx.measureText(name).width;
+            offCtx.fillText(name, xPos - textWidth / 2, yPos);
 
-            const safeName = name.trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_\-]/g, '');
+            const safeName = name.trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_\-]/g, '') || 'Certificate';
 
             // ── PDF only ─────────────────────────────────────────────────────
             const pngData = offCanvas.toDataURL('image/png');
@@ -236,5 +246,13 @@ document.addEventListener('DOMContentLoaded', () => {
         progressFill.style.width = '0%';
         downloadZipBtn.disabled = false;
         downloadZipBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> Download ZIP`;
+    } catch (err) {
+        console.error('Bulk generation failed:', err);
+        alert('Something went wrong generating the ZIP. Please try again.');
+        bulkProgress.style.display = 'none';
+        progressFill.style.width = '0%';
+        downloadZipBtn.disabled = false;
+        downloadZipBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> Download ZIP`;
+    }
     });
 });
