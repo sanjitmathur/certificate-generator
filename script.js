@@ -190,13 +190,9 @@ document.addEventListener('DOMContentLoaded', () => {
             offCtx.fillText(name, offCanvas.width / 2, yPos);
 
             const safeName = name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_\-]/g, '');
-            const folder = zip.folder(safeName);
 
-            // ── PNG ──────────────────────────────────────────────────────────
+            // ── PDF only ─────────────────────────────────────────────────────
             const pngData = offCanvas.toDataURL('image/png');
-            folder.file(`${safeName}_Certificate.png`, pngData.split(',')[1], { base64: true });
-
-            // ── PDF ──────────────────────────────────────────────────────────
             const pdf = new jsPDF({
                 orientation: pdfOrientation,
                 unit: 'mm',
@@ -205,12 +201,12 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             pdf.addImage(pngData, 'PNG', 0, 0, pdfW, pdfH);
             const pdfBytes = pdf.output('arraybuffer');
-            folder.file(`${safeName}_Certificate.pdf`, pdfBytes);
+            zip.file(`${safeName}.pdf`, pdfBytes);
 
             // Update progress
             const pct = Math.round(((i + 1) / names.length) * 100);
             progressFill.style.width = `${pct}%`;
-            progressLabel.textContent = `${i + 1} / ${names.length} — PNG · PDF`;
+            progressLabel.textContent = `${i + 1} / ${names.length} — PDF`;
 
             // Yield to browser to keep UI responsive
             await new Promise(r => setTimeout(r, 0));
