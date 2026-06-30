@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const fileName = document.getElementById('fileName');
     const recipientName = document.getElementById('recipientName');
     const verticalPos = document.getElementById('verticalPos');
+    const horizontalPos = document.getElementById('horizontalPos');
     const fontSize = document.getElementById('fontSize');
     const fontFamily = document.getElementById('fontFamily');
     const textColor = document.getElementById('textColor');
@@ -84,12 +85,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const color = textColor.value;
         const yPosPercent = verticalPos.value / 100;
         const yPos = canvas.height * yPosPercent;
+        const xPosPercent = horizontalPos.value / 100;
+        const xPos = canvas.width * xPosPercent;
 
         ctx.font = `${size}px ${font}`;
         ctx.fillStyle = color;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'bottom';
-        ctx.fillText(name, canvas.width / 2, yPos);
+        ctx.fillText(name, xPos, yPos);
     }
 
     function getFirstBulkName() {
@@ -119,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ─── Shared input listeners ───────────────────────────────────────────────
-    const sharedInputs = [verticalPos, fontSize, fontFamily, textColor];
+    const sharedInputs = [verticalPos, horizontalPos, fontSize, fontFamily, textColor];
     sharedInputs.forEach(input => input.addEventListener('input', drawCertificate));
     recipientName.addEventListener('input', drawCertificate);
 
@@ -182,12 +185,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const color = textColor.value;
             const yPosPercent = verticalPos.value / 100;
             const yPos = offCanvas.height * yPosPercent;
+            const xPosPercent = horizontalPos.value / 100;
+            const xPos = offCanvas.width * xPosPercent;
 
             offCtx.font = `${size}px ${font}`;
             offCtx.fillStyle = color;
             offCtx.textAlign = 'center';
             offCtx.textBaseline = 'bottom';
-            offCtx.fillText(name, offCanvas.width / 2, yPos);
+            offCtx.fillText(name, xPos, yPos);
 
             const safeName = name.trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_\-]/g, '');
 
