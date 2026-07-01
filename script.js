@@ -17,10 +17,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const singleFilePreview = document.getElementById('singleFilePreview');
 
     // Bulk elements
-    const bulkNames     = document.getElementById('bulkNames');
-    const bulkCount     = document.getElementById('bulkCount');
-    const bulkFileName  = document.getElementById('bulkFileName');
-    const bulkFilePreview = document.getElementById('bulkFilePreview');
+    const bulkNames      = document.getElementById('bulkNames');
+    const bulkCount      = document.getElementById('bulkCount');
+    const bulkFileName   = document.getElementById('bulkFileName');
+    const bulkFilePreview  = document.getElementById('bulkFilePreview');
+    const bulkFolderName   = document.getElementById('bulkFolderName');
+    const bulkFolderPreview = document.getElementById('bulkFolderPreview');
     const downloadZipBtn = document.getElementById('downloadZipBtn');
     const bulkProgress  = document.getElementById('bulkProgress');
     const progressFill  = document.getElementById('progressFill');
@@ -341,6 +343,14 @@ document.addEventListener('DOMContentLoaded', () => {
             : `📄 ${firstFile}`;
     }
 
+    // Live preview for bulk folder / zip name
+    bulkFolderName.addEventListener('input', updateFolderPreview);
+    function updateFolderPreview() {
+        const raw    = bulkFolderName.value.trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_\-]/g, '');
+        const folder = raw || 'certificates';
+        bulkFolderPreview.textContent = `📦 ${folder}.zip  →  ${folder}/`;
+    }
+
     // Enter key on single mode
     recipientName.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
@@ -412,6 +422,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const safePersonName = name.trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_\-]/g, '') || 'Certificate';
             const bulkSuffix     = bulkFileName.value.trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_\-]/g, '');
             const safeName       = bulkSuffix ? `${safePersonName}_${bulkSuffix}` : safePersonName;
+            const rawFolder      = bulkFolderName.value.trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_\-]/g, '');
+            const folderPrefix   = rawFolder ? `${rawFolder}/` : '';
 
             const pngData = offCanvas.toDataURL('image/png');
             const pdf = new jsPDF({
@@ -422,7 +434,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             pdf.addImage(pngData, 'PNG', 0, 0, pdfW, pdfH);
             const pdfBytes = pdf.output('arraybuffer');
-            zip.file(`${safeName}.pdf`, pdfBytes);
+            zip.file(`${folderPrefix}${safeName}.pdf`, pdfBytes);
 
             const pct = Math.round(((i + 1) / names.length) * 100);
             progressFill.style.width   = `${pct}%`;
@@ -438,7 +450,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const url  = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href  = url;
-        link.download = 'certificates.zip';
+        const rawFolder  = bulkFolderName.value.trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_\-]/g, '');
+        const folderName = rawFolder || 'certificates';
+        link.download = `${folderName}.zip`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
