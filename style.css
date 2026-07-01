@@ -85,6 +85,12 @@ body {
     color: var(--text-main);
 }
 
+.label-hint {
+    font-weight: 400;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
 input[type="text"], select {
     width: 100%;
     padding: 0.75rem 1rem;
@@ -215,6 +221,30 @@ canvas {
     object-fit: contain;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     display: none;
+    cursor: crosshair;
+}
+
+/* Drag hint badge */
+.drag-hint {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(46, 125, 50, 0.88);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 99px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+}
+
+.canvas-container:hover .drag-hint {
+    opacity: 1;
 }
 
 .placeholder-text {

@@ -33,12 +33,12 @@
 
                 <!-- Style controls (shared) -->
                 <div class="control-group">
-                    <label for="verticalPos">Text Vertical Position</label>
+                    <label for="verticalPos">Vertical Position <span class="label-hint">(or drag on canvas)</span></label>
                     <input type="range" id="verticalPos" min="0" max="100" value="60">
                 </div>
 
                 <div class="control-group">
-                    <label for="horizontalPos">Text Horizontal Position</label>
+                    <label for="horizontalPos">Horizontal Position <span class="label-hint">(or drag on canvas)</span></label>
                     <input type="range" id="horizontalPos" min="0" max="100" value="50">
                 </div>
                 
@@ -73,6 +73,11 @@
                         <label for="recipientName">Recipient Name</label>
                         <input type="text" id="recipientName" placeholder="e.g. Jane Doe" autocomplete="off">
                     </div>
+                    <div class="control-group">
+                        <label for="singleFileName">PDF File Name <span class="label-hint">(optional)</span></label>
+                        <input type="text" id="singleFileName" placeholder="e.g. certificate" autocomplete="off">
+                        <span class="file-name" id="singleFilePreview"></span>
+                    </div>
                     <button id="downloadBtn" class="primary-btn" disabled>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                         Download Certificate
@@ -85,6 +90,11 @@
                         <label for="bulkNames">Names (one per line)</label>
                         <textarea id="bulkNames" rows="6" placeholder="Alice Johnson&#10;Bob Smith&#10;Carol White&#10;..."></textarea>
                         <span class="file-name" id="bulkCount">0 names entered</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="bulkFileName">PDF File Name <span class="label-hint">(optional)</span></label>
+                        <input type="text" id="bulkFileName" placeholder="e.g. art" autocomplete="off">
+                        <span class="file-name" id="bulkFilePreview"></span>
                     </div>
                     <button id="downloadZipBtn" class="primary-btn" disabled>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
@@ -106,6 +116,7 @@
                     <div id="placeholder" class="placeholder-text">
                         <p>Upload a certificate template to begin.</p>
                     </div>
+                    <div id="dragHint" class="drag-hint">✦ Drag the text to reposition</div>
                 </div>
             </section>
         </main>
